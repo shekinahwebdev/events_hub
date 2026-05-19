@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { MdLocationOn, MdEventAvailable } from "react-icons/md";
 
 const page = async () => {
-  const events = await prisma.event.findMany().then((e) => e.slice(0, 3)); // Get first 3 events
+  const events = await prisma.event.findMany();
 
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900">

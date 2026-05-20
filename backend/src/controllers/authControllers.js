@@ -1,18 +1,20 @@
-const { PrismaClient } = require("@prisma/client/extension");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const prisma = require("../db");
 
-const primsa = new PrismaClient();
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
 
-// Short-lived Access Token (for authorizing API calls)
-const buildAccesToken = (userId) =>
+// short-lived Access Token
+const buildAccessToken = (userId) =>
   jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "20m",
   });
 
-// Long-lived Refresh Token (for getting a new access token)
+// long-lived Refresh Token
 const buildRefreshToken = (userId) =>
-  jwt.sign({ userId }, process.env.REFESH_SECRET, {
+  jwt.sign({ userId }, process.env.REFRESH_SECRET, {
     expiresIn: "7d",
   });
 
@@ -41,21 +43,22 @@ const register = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-      email: email.toLowerCase(),
-      password: hashedPassword,
+      data: {
+        email: email.toLowerCase(),
+        password: hashPassword,
+      },
     });
 
-    //GENERATE BOTH TOKENS
+    // GENERATE BOTH TOKENS
     const accessToken = buildAccessToken(user.id);
     const refreshToken = buildRefreshToken(user.id);
 
-    //Send Refresh Token in a secure HttpOnly cookie
-    // so client-side JavaScript can't steal it, and send Access Token in JSON.
+    // Send Refresh Token in a secure HttpOnly cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days matching token expiry
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     // Send the access token and non-sensitive user details back to Next.js
@@ -88,9 +91,6 @@ const login = async (req, res) => {
       where: { email: normalizedEmail },
     });
 
-    const accessToken = buildAccessToken(user.id);
-    const refreshToken = buildRefreshToken(user.id);
-
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
@@ -104,7 +104,6 @@ const login = async (req, res) => {
     const refreshToken = buildRefreshToken(user.id);
 
     // Send Refresh Token in a secure HttpOnly cookie
-    // so client-side JavaScript can't steal it, and send Access Token in JSON.
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -136,7 +135,6 @@ const refresh = async (req, res) => {
         .json({ message: "Refresh token missing. Please log in." });
     }
 
-    // Verify the cryptographic signature of the refresh token
     jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, decoded) => {
       if (err) {
         return res
@@ -144,7 +142,6 @@ const refresh = async (req, res) => {
           .json({ message: "Invalid or expired refresh token." });
       }
 
-      // Issue a fresh access token using the decoded user ID from the payload
       const accessToken = buildAccessToken(decoded.userId);
 
       return res.status(200).json({

@@ -2,17 +2,17 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const authRoutes = require("./routes/authRoutes");
-const { PrismaClient } = require("@prisma/client/extension");
 const cookieParser = require("cookie-parser");
+const prisma = require("./db");
 
-const prisma = new PrismaClient();
 const app = express();
-const port = process.env.PORT || 6000;
+const port = process.env.PORT || 5001;
+// const port = 5001;
 
 // Updated secure CORS pipeline handler
 app.use(
   cors({
-    origin: "http//localhost:3000",
+    origin: "http://localhost:3000",
     credentials: true,
   }),
 );
@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Health check on endpoint
-app.get("/api/heath", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Server is running" });
 });
 

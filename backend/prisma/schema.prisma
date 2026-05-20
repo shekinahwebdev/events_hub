@@ -5,7 +5,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  url = env("DATABASE_URL")
 }
 
 datasource db {
@@ -17,7 +16,7 @@ model User {
   id            BigInt         @id @default(autoincrement())
   email         String         @unique
   password      String      
-  createdAt     DateTime       @default(now()) @map("created_at") // Maps to your underscore name
+  createdAt     DateTime       @default(now()) @map("created_at")
   registrations Registration[]
 
   @@map("users")

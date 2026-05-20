@@ -10,6 +10,8 @@ import {
   MdVisibility,
   MdVisibilityOff,
 } from "react-icons/md";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,11 +19,62 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
+
+  const validateForm = () => {
+    if (!email.trim()) {
+      setError("Email is required");
+      return false;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Login failed");
+        return;
+      }
+
+      Cookies.set("token", data.accessToken, { expires: 1 / 24 }); // Expires in 1 hour
+
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      router.push("/");
+      router.refresh();
+    } catch (error: any) {
+      setError(
+        error.message || "Connection refused. Is your backend server running?",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -30,7 +83,6 @@ export default function LoginPage() {
 
       <section className="mx-auto max-w-md px-4 py-16 sm:px-6 sm:py-24 lg:px-10">
         <div className="rounded-2xl bg-white p-8 shadow-sm border border-slate-200">
-          {/* Header */}
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.1em] text-sky-600">
               Welcome back

@@ -10,7 +10,6 @@ const app = express();
 const port = process.env.PORT || 5001;
 // const port = 5001;
 
-// Updated secure CORS pipeline handler
 app.use(
   cors({
     origin: "http://localhost:3000",

@@ -67,7 +67,7 @@ export default function LoginPage() {
 
       const token = Cookies.get("token");
 
-      console.log("User token", token);
+      // console.log("User token", token);
 
       const decodedUserToken = jwtDecode(token || "") as {
         id: string;
@@ -75,9 +75,6 @@ export default function LoginPage() {
         iat: number;
         exp: number;
       };
-
-      console.log(decodedUserToken);
-      console.log(decodedUserToken.email);
 
       localStorage.setItem("user", JSON.stringify(data.user));
 

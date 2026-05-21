@@ -28,7 +28,7 @@ export default function Navbar() {
           const namePart = userEmail.split("@")[0].charAt(0).toUpperCase();
           setInitials(namePart);
           setUserEmail(userEmail);
-          console.log(namePart);
+          //   console.log(namePart);
         }
       } catch (error) {
         console.error("Failed to decode token:", error);

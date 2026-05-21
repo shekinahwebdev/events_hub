@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Event Hub",
-  description: "Simple event registration homepage for students.",
+  description: "Simple event registration platform for everyone",
 };
 
 export default function RootLayout({

@@ -43,7 +43,7 @@ const registerForEvent = async (req, res) => {
     ]);
 
     return res.status(201).json({
-      message: "Successfully registered for this event! 🎟️",
+      message: "Successfully registered for this event!",
       registration: newRegistration,
     });
   } catch (error) {

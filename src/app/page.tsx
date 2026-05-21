@@ -31,12 +31,6 @@ const page = async () => {
               >
                 Browse Events
               </Link>
-              <Link
-                href="/register"
-                className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-medium text-slate-900 transition hover:border-sky-900 hover:bg-sky-900 hover:text-white"
-              >
-                Create Account
-              </Link>
             </div>
           </div>
           <div className="grid gap-6 sm:grid-cols-2">

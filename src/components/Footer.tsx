@@ -5,7 +5,6 @@ export default function Footer() {
     <footer className="border-t border-slate-200 bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
         <div className="grid gap-8 sm:grid-cols-4">
-          {/* Brand */}
           <div>
             <p className="font-bold text-sky-900">Event Hub</p>
             <p className="mt-2 text-sm text-slate-600">
@@ -13,7 +12,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Links */}
           <div>
             <p className="text-sm font-semibold text-slate-900">Product</p>
             <ul className="mt-4 space-y-2">
@@ -36,7 +34,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Company */}
           <div>
             <p className="text-sm font-semibold text-slate-900">Company</p>
             <ul className="mt-4 space-y-2">
@@ -59,7 +56,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
             <p className="text-sm font-semibold text-slate-900">Legal</p>
             <ul className="mt-4 space-y-2">

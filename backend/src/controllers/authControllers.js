@@ -7,23 +7,21 @@ BigInt.prototype.toJSON = function () {
 };
 
 // short-lived Access Token
-const buildAccessToken = (userId) =>
-  jwt.sign({ userId }, process.env.JWT_SECRET, {
+const buildAccessToken = (userId, email) =>
+  jwt.sign({ userId, email }, process.env.JWT_SECRET, {
     expiresIn: "20m",
   });
 
 // long-lived Refresh Token
-const buildRefreshToken = (userId) =>
-  jwt.sign({ userId }, process.env.REFRESH_SECRET, {
+const buildRefreshToken = (userId, email) =>
+  jwt.sign({ userId, email }, process.env.REFRESH_SECRET, {
     expiresIn: "7d",
   });
 
 const register = async (req, res) => {
   try {
-    // send credientials
     const { email, password } = req.body;
 
-    // check if credentials aren't inputted
     if (!email || !password) {
       return res
         .status(400)
@@ -50,10 +48,10 @@ const register = async (req, res) => {
     });
 
     // GENERATE BOTH TOKENS
-    const accessToken = buildAccessToken(user.id);
-    const refreshToken = buildRefreshToken(user.id);
+    const accessToken = buildAccessToken(user.id, user.email);
+    const refreshToken = buildRefreshToken(user.id, user.email);
 
-    // Send Refresh Token in a secure HttpOnly cookie
+    // send refresh token in a secure HttpOnly cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -61,7 +59,6 @@ const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Send the access token and non-sensitive user details back to Next.js
     return res.status(201).json({
       message: "Account created successfully",
       accessToken,
@@ -76,10 +73,8 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    // send credientials
     const { email, password } = req.body;
 
-    // check if credentials aren't inputted
     if (!email || !password) {
       return res
         .status(400)
@@ -100,10 +95,9 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
-    const accessToken = buildAccessToken(user.id);
-    const refreshToken = buildRefreshToken(user.id);
+    const accessToken = buildAccessToken(user.id, user.email);
+    const refreshToken = buildRefreshToken(user.id, user.email);
 
-    // Send Refresh Token in a secure HttpOnly cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -111,7 +105,6 @@ const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Send the access token and non-sensitive user details back to Next.js
     return res.status(200).json({
       message: "User logged in successfully",
       accessToken,
@@ -126,7 +119,7 @@ const login = async (req, res) => {
 
 const refresh = async (req, res) => {
   try {
-    // Grab the refresh token from the parsed cookies locker
+    // grab the refresh token from the parsed cookies locker
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {

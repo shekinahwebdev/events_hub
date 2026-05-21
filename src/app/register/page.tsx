@@ -101,16 +101,13 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            {/* Error Message */}
             {error && (
               <div className="rounded-lg bg-red-50 border border-red-200 p-3">
                 <p className="text-sm text-red-700">{error}</p>
               </div>
             )}
 
-            {/* Email Input */}
             <div>
               <label
                 htmlFor="email"
@@ -134,7 +131,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Password Input */}
             <div>
               <label
                 htmlFor="password"
@@ -171,8 +167,6 @@ export default function RegisterPage() {
                 At least 6 characters
               </p>
             </div>
-
-            {/* Confirm Password Input */}
             <div>
               <label
                 htmlFor="confirmPassword"
@@ -207,7 +201,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
@@ -217,14 +210,12 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="mt-6 flex items-center gap-3">
             <div className="flex-1 border-t border-slate-200" />
             <span className="text-xs text-slate-500">OR</span>
             <div className="flex-1 border-t border-slate-200" />
           </div>
 
-          {/* Sign In Link */}
           <p className="mt-6 text-center text-sm text-slate-600">
             Already have an account?{" "}
             <Link
@@ -234,8 +225,6 @@ export default function RegisterPage() {
               Sign in
             </Link>
           </p>
-
-          {/* Back to Home */}
           <Link
             href="/"
             className="mt-6 block text-center text-sm font-medium text-slate-600 hover:text-slate-900 transition"

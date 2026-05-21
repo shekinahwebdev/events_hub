@@ -2,6 +2,7 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const authRoutes = require("./routes/authRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 const cookieParser = require("cookie-parser");
 const prisma = require("./db");
 
@@ -19,15 +20,15 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Health check on endpoint
+// health check on endpoint
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Server is running" });
 });
 
-// Authentication Dynamic Pipeline Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
 
-// Fallback Route for Missing Endpoints
+// fallback route for missing endpoints
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found!" });
 });

@@ -14,7 +14,18 @@ type Props = { params: Promise<{ id: string }> };
 
 const EventDetailPage = async ({ params }: Props) => {
   const resolvedParams = await params;
-  const eventId = parseInt(resolvedParams.id);
+  const rawId = resolvedParams.id;
+
+  if (!rawId || isNaN(Number(rawId))) {
+    redirect("/events");
+  }
+
+  let eventId: bigint;
+  try {
+    eventId = BigInt(rawId);
+  } catch {
+    redirect("/events");
+  }
 
   const event = await prisma.event.findUnique({
     where: { id: eventId },
@@ -35,7 +46,6 @@ const EventDetailPage = async ({ params }: Props) => {
       <Navbar />
 
       <section className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24 lg:px-10">
-        {/* Back Button */}
         <Link
           href="/events"
           className="inline-flex items-center gap-2 text-sm font-medium text-sky-900 hover:text-sky-800 transition"
@@ -44,7 +54,6 @@ const EventDetailPage = async ({ params }: Props) => {
           Back to events
         </Link>
 
-        {/* Header */}
         <div className="mt-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex-1">
@@ -63,18 +72,14 @@ const EventDetailPage = async ({ params }: Props) => {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="mt-12 grid gap-8 lg:grid-cols-3">
-          {/* Left Side - Event Details */}
           <div className="lg:col-span-2">
-            {/* Event Information */}
             <div className="rounded-2xl bg-white p-8 shadow-sm border border-slate-200">
               <h2 className="text-2xl font-bold text-slate-950">
                 Event Information
               </h2>
 
               <div className="mt-8 space-y-6">
-                {/* Location */}
                 <div className="flex items-start gap-4">
                   <div className="rounded-xl bg-sky-50 p-3">
                     <MdLocationOn className="w-6 h-6 text-sky-900" />
@@ -89,7 +94,6 @@ const EventDetailPage = async ({ params }: Props) => {
                   </div>
                 </div>
 
-                {/* Total Slots */}
                 <div className="flex items-start gap-4">
                   <div className="rounded-xl bg-emerald-50 p-3">
                     <MdEventAvailable className="w-6 h-6 text-emerald-900" />
@@ -104,7 +108,6 @@ const EventDetailPage = async ({ params }: Props) => {
                   </div>
                 </div>
 
-                {/* Remaining Slots */}
                 <div className="flex items-start gap-4">
                   <div className="rounded-xl bg-violet-50 p-3">
                     <MdCalendarToday className="w-6 h-6 text-violet-900" />
@@ -121,7 +124,6 @@ const EventDetailPage = async ({ params }: Props) => {
               </div>
             </div>
 
-            {/* Occupancy */}
             <div className="mt-8 rounded-2xl bg-white p-8 shadow-sm border border-slate-200">
               <h2 className="text-2xl font-bold text-slate-950">
                 Registration Status
@@ -145,20 +147,18 @@ const EventDetailPage = async ({ params }: Props) => {
               </div>
 
               <Link
-                href="/register"
+                href={`/book?id=${event.id}`}
                 className={`mt-6 inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-medium transition ${
                   isFull
                     ? "bg-slate-200 text-slate-600 cursor-not-allowed"
                     : "bg-sky-900 text-white hover:bg-sky-800"
                 }`}
-                // onClick={(e) => isFull && e.preventDefault()}
               >
-                {isFull ? "Event Full" : "Register Now"}
+                {isFull ? "Event Full" : "Book Now"}
               </Link>
             </div>
           </div>
 
-          {/* Right Side - CTA */}
           <div>
             <div className="sticky top-20 rounded-2xl bg-white p-8 shadow-sm border border-slate-200">
               <h3 className="text-xl font-bold text-slate-950">
@@ -170,48 +170,6 @@ const EventDetailPage = async ({ params }: Props) => {
                   ? "This event is currently full. Check back later for updates."
                   : `Only ${spotsLeft} ${spotsLeft === 1 ? "spot" : "spots"} remaining!`}
               </p>
-
-              {/* <div className="mt-6 space-y-3">
-                <Link
-                  href={isFull ? "#" : "/register"}
-                  className={`block rounded-xl px-6 py-3 text-center text-sm font-medium transition ${
-                    isFull
-                      ? "bg-slate-200 text-slate-600 cursor-not-allowed"
-                      : "bg-sky-900 text-white hover:bg-sky-800"
-                  }`}
-                  onClick={(e) => isFull && e.preventDefault()}
-                >
-                  {isFull ? "Event Full" : "Register Now"}
-                </Link>
-
-                <Link
-                  href="/events"
-                  className="block rounded-xl border border-slate-300 bg-white px-6 py-3 text-center text-sm font-medium text-slate-900 transition hover:border-sky-900 hover:bg-sky-900 hover:text-white"
-                >
-                  Browse Other Events
-                </Link>
-              </div> */}
-
-              {/* <div className="mt-8 space-y-4 border-t border-slate-200 pt-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Status</span>
-                  <span
-                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
-                      isFull
-                        ? "bg-red-100 text-red-900"
-                        : "bg-green-100 text-green-900"
-                    }`}
-                  >
-                    {isFull ? "Full" : "Available"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Occupancy</span>
-                  <span className="text-sm font-semibold text-slate-950">
-                    {occupancyPercent}%
-                  </span>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

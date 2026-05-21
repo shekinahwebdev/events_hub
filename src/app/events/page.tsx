@@ -39,22 +39,18 @@ export default async function EventsPage() {
                 key={event.id}
                 className="group rounded-2xl bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg border border-slate-200"
               >
-                {/* Badge */}
                 <span className="inline-flex rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-900">
                   {Number(event.remainingSlots) > 0 ? "Available" : "Full"}
                 </span>
 
-                {/* Title */}
                 <h2 className="mt-4 text-xl font-bold text-slate-950 group-hover:text-sky-900 transition">
                   {event.title}
                 </h2>
 
-                {/* Description */}
                 <p className="mt-2 text-sm text-slate-600 leading-6">
                   {event.description}
                 </p>
 
-                {/* Meta Info */}
                 <div className="mt-6 space-y-2">
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     <MdLocationOn className="w-4 h-4" />
@@ -71,13 +67,12 @@ export default async function EventsPage() {
                   </div>
                 </div>
 
-                {/* Buttons */}
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <Link
-                    href="/register"
+                    href={`/book?id=${event.id}`}
                     className="inline-flex items-center justify-center rounded-xl bg-sky-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-sky-800"
                   >
-                    Register now
+                    Book now
                   </Link>
                   <Link
                     href={`/events/${event.id}`}

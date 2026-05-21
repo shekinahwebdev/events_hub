@@ -12,6 +12,7 @@ import {
 } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -64,6 +65,20 @@ export default function LoginPage() {
 
       Cookies.set("token", data.accessToken, { expires: 1 / 24 }); // Expires in 1 hour
 
+      const token = Cookies.get("token");
+
+      console.log("User token", token);
+
+      const decodedUserToken = jwtDecode(token || "") as {
+        id: string;
+        email: string;
+        iat: number;
+        exp: number;
+      };
+
+      console.log(decodedUserToken);
+      console.log(decodedUserToken.email);
+
       localStorage.setItem("user", JSON.stringify(data.user));
 
       router.push("/");
@@ -95,16 +110,13 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            {/* Error Message */}
             {error && (
               <div className="rounded-lg bg-red-50 border border-red-200 p-3">
                 <p className="text-sm text-red-700">{error}</p>
               </div>
             )}
 
-            {/* Email Input */}
             <div>
               <label
                 htmlFor="email"
@@ -127,8 +139,6 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-
-            {/* Password Input */}
             <div>
               <label
                 htmlFor="password"
@@ -162,8 +172,6 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-
-            {/* Forgot Password */}
             <div className="flex justify-end">
               <Link
                 href="#"
@@ -173,7 +181,6 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
@@ -183,14 +190,12 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="mt-6 flex items-center gap-3">
             <div className="flex-1 border-t border-slate-200" />
             <span className="text-xs text-slate-500">OR</span>
             <div className="flex-1 border-t border-slate-200" />
           </div>
 
-          {/* Sign Up Link */}
           <p className="mt-6 text-center text-sm text-slate-600">
             Don't have an account?{" "}
             <Link
@@ -201,7 +206,6 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          {/* Back to Home */}
           <Link
             href="/"
             className="mt-6 block text-center text-sm font-medium text-slate-600 hover:text-slate-900 transition"
